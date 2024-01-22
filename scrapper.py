@@ -2,6 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import csv
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 def html_code(url):
     headers = {
@@ -10,7 +14,26 @@ def html_code(url):
     soup = BeautifulSoup(response.content, "html.parser")
     return soup
 
-def cus_rev(soup):
+def get_full_review(review_block, url):
+    read_more_button = review_block.find('button', {'class': '_XVjZLG'})
+    
+    if read_more_button:
+        # Use Selenium to click the 'Read More' button and wait for the content to load
+        driver = webdriver.Chrome()  
+        driver.get(url)
+        
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, '_XVjZLG'))).click()
+        
+        full_review_elem = driver.find_element_by_css_selector('div[class^="ooJZfM"]')
+        full_review = full_review_elem.text.strip()
+        
+        driver.quit()  # Close the browser
+        
+        return full_review
+
+    return review_block.text.strip()
+
+def cus_rev(soup, url):
     reviews = []
     review_blocks = soup.find_all('div', {'class': '_27M-vq'})
     for block in review_blocks:
@@ -20,14 +43,13 @@ def cus_rev(soup):
         name_elem = block.find_all('p', {'class': '_2sc7ZR'})[0]
         date_elem = block.find_all('p', {'class': '_2sc7ZR'})[1]
         location_elem = block.find('p', {'class': '_2mcZGG'})
-
-        # Check if location_elem is not None before accessing its text attribute
-        location_text = location_elem.text if location_elem else None
         
+        location_text = location_elem.text if location_elem else None
+
         if rating_elem and review_elem and name_elem and date_elem:
             review = {
                 'Rating': rating_elem.text,
-                'Review': review_elem.text,
+                'Review': get_full_review(review_elem, url),
                 'Name': name_elem.text.strip(),
                 'Date': date_elem.text.strip(),
                 'Review Description': sum_elem.text.strip(),
@@ -63,7 +85,7 @@ def main():
         page_url = url + "&page=" + str(page)
         print(page, "st page is scraping")
         soup = html_code(page_url)
-        page_reviews = cus_rev(soup)
+        page_reviews = cus_rev(soup, url)
         
         if not page_reviews:
             print(f"No more pages to scrape.")
@@ -71,7 +93,6 @@ def main():
         
         reviews.extend(page_reviews)
         
-        # Check for the presence of the "Next" button or another indicator
         next_button = soup.find('a', {'class': '_1LKTO3'})
         if not next_button:
             print(f"No more pages to scrape.")
