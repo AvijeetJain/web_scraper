@@ -10,19 +10,6 @@ def html_code(url):
     soup = BeautifulSoup(response.content, "html.parser")
     return soup
 
-def save_reviews_to_csv(reviews, filename):
-    fields = ['Rating', 'Review', 'Name', 'Date', 'Review Description', 'Location', 'Link', 'Page Number']
-
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        csvwriter = csv.DictWriter(csvfile, fieldnames=fields)
-        csvwriter.writeheader()
-        csvwriter.writerows(reviews)
-
-    if reviews and 'Page Number' in reviews[0]:
-        print(f"Reviews written to {filename} from page {reviews[0]['Page Number']}")
-    else:
-        print(f"Reviews written to {filename}")
-
 def cus_rev(soup):
     reviews = []
     review_blocks = soup.find_all('div', {'class': '_27M-vq'})
@@ -46,28 +33,48 @@ def cus_rev(soup):
             reviews.append(review)
     return reviews
 
-# URL of the page to scrape
-url = "https://www.flipkart.com/sony-zv-e10l-mirrorless-camera-body-1650-mm-power-zoom-lens-vlog/product-reviews/itmed07cbb694444?pid=DLLG6G8U8P2NGEHG&lid=LSTDLLG6G8U8P2NGEHGGVZNLB&marketplace=FLIPKART"
+def save_reviews_to_csv(reviews, filename):
+    fields = ['Rating', 'Review', 'Name', 'Date', 'Review Description', 'Location']
 
-reviews = []
-page = 1
+    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+        csvwriter = csv.DictWriter(csvfile, fieldnames=fields)
+        csvwriter.writeheader()
+        csvwriter.writerows(reviews)
 
-while True:
-    page_url = url + "&page=" + str(page)
-    print(page, "st page is scraping")
-    soup = html_code(page_url)
-    page_reviews = cus_rev(soup)
-    if not page_reviews:
-        break
-    reviews.extend(page_reviews)
-    page += 1
+    print(f"Reviews written to CSV: {filename}")
 
-print(reviews)
+def save_reviews_to_json(reviews, filename):
+    with open(filename, 'w', encoding='utf-8') as json_file:
+        json.dump(reviews, json_file, ensure_ascii=False, indent=2)
 
-save_reviews_to_csv(reviews, 'reviews.csv')
+    print(f"Reviews written to JSON: {filename}")
 
-output_filename = f"allReviews.json"
-with open(output_filename, 'w', encoding='utf-8') as json_file:
-    json.dump(reviews, json_file, ensure_ascii=False, indent=2)
-    
-print("Reviews saved to Google Sheets.")
+def main():
+    # URL of the page to scrape
+    url = "https://www.flipkart.com/sony-zv-e10l-mirrorless-camera-body-1650-mm-power-zoom-lens-vlog/product-reviews/itmed07cbb694444?pid=DLLG6G8U8P2NGEHG&lid=LSTDLLG6G8U8P2NGEHGGVZNLB&marketplace=FLIPKART"
+
+    reviews = []
+    page = 1
+
+    while True:
+        page_url = url + "&page=" + str(page)
+        print(page, "st page is scraping")
+        soup = html_code(page_url)
+        page_reviews = cus_rev(soup)
+        if not page_reviews:
+            break
+        reviews.extend(page_reviews)
+        page += 1
+
+    print(reviews)
+
+    # Save reviews to CSV
+    save_reviews_to_csv(reviews, 'reviews.csv')
+
+    # Save all reviews to JSON
+    save_reviews_to_json(reviews, 'allReviews.json')
+
+    print("Script completed successfully.")
+
+if __name__ == "__main__":
+    main()
