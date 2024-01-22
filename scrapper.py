@@ -15,14 +15,9 @@ def save_reviews_to_csv(reviews, filename):
 
     with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
         csvwriter = csv.DictWriter(csvfile, fieldnames=fields)
-
-        # Write the header
         csvwriter.writeheader()
-
-        # Write the data
         csvwriter.writerows(reviews)
 
-    # Check if the 'Page Number' key is present before accessing it
     if reviews and 'Page Number' in reviews[0]:
         print(f"Reviews written to {filename} from page {reviews[0]['Page Number']}")
     else:
