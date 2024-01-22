@@ -1,11 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from oauth2client.service_account import ServiceAccountCredentials
-import gspread
-from datetime import date
 import json
 import csv
-
 
 def html_code(url):
     headers = {
@@ -13,17 +9,6 @@ def html_code(url):
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.content, "html.parser")
     return soup
-
-# def save_reviews_to_csv(reviews, filename):
-#     fields = ['Rating', 'Review', 'Name', 'Date', 'Review Description', 'Location', 'Link', 'Page Number']
-
-#     with open(filename, 'a', newline='', encoding='utf-8') as csvfile:
-#         csvwriter = csv.DictWriter(csvfile, fieldnames=fields)
-
-#         # Write the data
-#         csvwriter.writerows(reviews)
-
-#     print(f"Reviews appended to {filename} from page {reviews[0]['Page Number']}")
 
 def save_reviews_to_csv(reviews, filename):
     fields = ['Rating', 'Review', 'Name', 'Date', 'Review Description', 'Location', 'Link', 'Page Number']
@@ -82,14 +67,12 @@ while True:
     reviews.extend(page_reviews)
     page += 1
 
-
 print(reviews)
 
 save_reviews_to_csv(reviews, 'reviews.csv')
 
-output_filename = f"reviews_{date.today().strftime('%Y-%m-%d')}.json"
+output_filename = f"allReviews.json"
 with open(output_filename, 'w', encoding='utf-8') as json_file:
     json.dump(reviews, json_file, ensure_ascii=False, indent=2)
-    
     
 print("Reviews saved to Google Sheets.")
