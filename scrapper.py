@@ -20,6 +20,9 @@ def cus_rev(soup):
         name_elem = block.find_all('p', {'class': '_2sc7ZR'})[0]
         date_elem = block.find_all('p', {'class': '_2sc7ZR'})[1]
         location_elem = block.find('p', {'class': '_2mcZGG'})
+
+        # Check if location_elem is not None before accessing its text attribute
+        location_text = location_elem.text if location_elem else None
         
         if rating_elem and review_elem and name_elem and date_elem:
             review = {
@@ -28,7 +31,7 @@ def cus_rev(soup):
                 'Name': name_elem.text.strip(),
                 'Date': date_elem.text.strip(),
                 'Review Description': sum_elem.text.strip(),
-                'Location': location_elem.text
+                'Location': location_text
             }
             reviews.append(review)
     return reviews
@@ -51,7 +54,7 @@ def save_reviews_to_json(reviews, filename):
 
 def main():
     # URL of the page to scrape
-    url = "https://www.flipkart.com/sony-zv-e10l-mirrorless-camera-body-1650-mm-power-zoom-lens-vlog/product-reviews/itmed07cbb694444?pid=DLLG6G8U8P2NGEHG&lid=LSTDLLG6G8U8P2NGEHGGVZNLB&marketplace=FLIPKART"
+    url = "https://www.flipkart.com/harry-potter-philosopher-s-stone/product-reviews/itmfc5dhvrkh5jqp?pid=9781408855652&lid=LSTBOK9781408855652OQYZXT&marketplace=FLIPKART"
 
     reviews = []
     page = 1
@@ -61,9 +64,19 @@ def main():
         print(page, "st page is scraping")
         soup = html_code(page_url)
         page_reviews = cus_rev(soup)
+        
         if not page_reviews:
+            print(f"No more pages to scrape.")
             break
+        
         reviews.extend(page_reviews)
+        
+        # Check for the presence of the "Next" button or another indicator
+        next_button = soup.find('a', {'class': '_1LKTO3'})
+        if not next_button:
+            print(f"No more pages to scrape.")
+            break
+
         page += 1
 
     print(reviews)
