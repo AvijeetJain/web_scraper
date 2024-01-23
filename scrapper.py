@@ -14,12 +14,12 @@ def html_code(url):
     soup = BeautifulSoup(response.content, "html.parser")
     return soup
 
-def get_full_review(review_block, url):
+def get_full_review(review_block, url, driver):
     read_more_button = review_block.find('button', {'class': '_XVjZLG'})
     
     if read_more_button:
         # Use Selenium to click the 'Read More' button and wait for the content to load
-        driver = webdriver.Chrome()  
+        # driver = webdriver.Chrome()  
         driver.get(url)
         
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, '_XVjZLG'))).click()
@@ -33,7 +33,7 @@ def get_full_review(review_block, url):
 
     return review_block.text.strip()
 
-def cus_rev(soup, url):
+def cus_rev(soup, url, driver):
     reviews = []
     review_blocks = soup.find_all('div', {'class': '_27M-vq'})
     for block in review_blocks:
@@ -49,7 +49,7 @@ def cus_rev(soup, url):
         if rating_elem and review_elem and name_elem and date_elem:
             review = {
                 'Rating': rating_elem.text,
-                'Review': get_full_review(review_elem, url),
+                'Review': get_full_review(review_elem, url, driver),
                 'Name': name_elem.text.strip(),
                 'Date': date_elem.text.strip(),
                 'Review Description': sum_elem.text.strip(),
@@ -80,12 +80,14 @@ def main():
 
     reviews = []
     page = 1
+    
+    driver = webdriver.Chrome()
 
     while True:
         page_url = url + "&page=" + str(page)
         print(page, "st page is scraping")
         soup = html_code(page_url)
-        page_reviews = cus_rev(soup, url)
+        page_reviews = cus_rev(soup, url, driver)
         
         if not page_reviews:
             print(f"No more pages to scrape.")
@@ -99,6 +101,8 @@ def main():
             break
 
         page += 1
+        
+    driver.quit()
 
     print(reviews)
 
