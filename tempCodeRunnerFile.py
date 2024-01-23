@@ -1,0 +1,1 @@
+full_review_elem = review_block.find('div', {'class': 't-ZTKy'})
