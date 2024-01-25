@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 
 def html_code(url):
     headers = {
@@ -31,30 +32,41 @@ def html_code(url):
 
 #     return review_block.text.strip()
 
-def get_full_review(review_block, driver):
-    read_more_button = review_block.find('span', {'class': '_1BWGvX'})
+def get_full_review(review_elem, driver, block):
+    read_more_elem = review_elem.find('span', {'class': '_1BWGvX'})
+    print("---------------")
+    print(read_more_elem)
+    print("---------------")
+    if read_more_elem:
+        print("READ MORE BUTTON FOUND")
+        
+        try:
+            # Convert the BeautifulSoup element to a Selenium WebElement
+            read_more_elem_selenium = driver.find_element(By.CLASS_NAME, '_1BWGvX')
+            
+            # Scroll into view using ActionChains
+            actions = ActionChains(driver)
+            actions.move_to_element(read_more_elem_selenium).perform()
+            
+            # Click the element using Selenium
+            read_more_elem_selenium.click()
+            
+        except Exception as e:
+            print(f"Error clicking 'READ MORE' button: {e}")
+    
+        # Wait for the expanded text to load (adjust the time accordingly)
+        time.sleep(10)
+        
+        # Find the element containing the full review text
+        # full_review_elem = driver.find_element_by_xpath('//div[@class="t-ZTKy"]/div/div')
+        full_review_elem = block.find('div', {'class': 't-ZTKy'})
+        print(full_review_elem.text.strip())
+        
+        return full_review_elem.text if full_review_elem else review_elem.text
 
-    if read_more_button:
-        print("Clicking 'READ MORE' button...")
-        # Use WebDriverWait to wait for the element to be clickable
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, '_1BWGvX'))).click()
 
-        # Wait for a short time to ensure content is loaded (you may adjust the sleep duration)
-        time.sleep(2)
-
-        # Use WebDriverWait to wait for the specific class or identifier to appear
-        full_review_elem = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.t-ZTKy'))
-        )
-
-        full_review = full_review_elem.text.strip() if full_review_elem else None
-
-        print("Full Review:", full_review)
-
-        return full_review
-
-    print("'READ MORE' button not found.")
-    return review_block.text.strip()
+    print("-> READ MORE button not found.")
+    return review_elem.text.strip()
 
 
 def cus_rev(soup, driver):
@@ -71,16 +83,22 @@ def cus_rev(soup, driver):
         location_text = location_elem.text if location_elem else None
 
         if rating_elem and review_elem and name_elem and date_elem:
+            review_text = get_full_review(sum_elem, driver, block)
+            print(review_text)
             review = {
                 'Rating': rating_elem.text,
-                'Review': get_full_review(review_elem, driver),
+                'Review': review_elem.text.strip(),
                 'Name': name_elem.text.strip(),
                 'Date': date_elem.text.strip(),
                 'Review Description': sum_elem.text.strip(),
                 'Location': location_text
             }
             reviews.append(review)
+            
+        print("---------------------------------------------------------------------")
+        print("---------------------------------------------------------------------")
     return reviews
+
 
 def save_reviews_to_csv(reviews, filename):
     fields = ['Rating', 'Review', 'Name', 'Date', 'Review Description', 'Location']
@@ -114,7 +132,7 @@ soup = BeautifulSoup(driver.page_source, "html.parser")
 
 # Scrape reviews from the desired page
 page_reviews = cus_rev(soup, driver)
-print(page_reviews)
+# print(page_reviews)
 
 save_reviews_to_csv(page_reviews, 'reviews2.csv')
 # Close the browser after scraping
