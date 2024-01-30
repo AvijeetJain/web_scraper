@@ -30,7 +30,7 @@ def click_all_read_more_buttons(driver):
 
         time.sleep(3)                                     # Wait for the expanded text to load (adjust the time accordingly)
 
-def cus_rev(soup, driver):
+def cus_rev(soup):
     reviews = []
     review_blocks = soup.find_all('div', {'class': '_27M-vq'})
     for block in review_blocks:
@@ -54,6 +54,7 @@ def cus_rev(soup, driver):
             }
             reviews.append(review)
 
+    save_reviews_to_csv(reviews, 'tempReviews.csv')
     return reviews
 
 def save_reviews_to_csv(reviews, filename):
@@ -86,10 +87,10 @@ def main():
     while True:
         page_url = url + "&page=" + str(page)
         driver.get(page_url)
-        print(page, "st page is scraping")
+        print(f"Page {page} being scraped")
         click_all_read_more_buttons(driver)
         soup = BeautifulSoup(driver.page_source, "html.parser")
-        page_reviews = cus_rev(soup, driver)
+        page_reviews = cus_rev(soup)
         
         # if not page_reviews:
         #     print(f"No more pages to scrape.")
@@ -108,7 +109,7 @@ def main():
 
     print(reviews)
 
-    save_reviews_to_csv(reviews, 'reviews.csv')         # Save reviews to CSV
+    save_reviews_to_csv(reviews, 'allReviews.csv')         # Save reviews to CSV
 
     save_reviews_to_json(reviews, 'allReviews.json')    # Save all reviews to JSON
 
