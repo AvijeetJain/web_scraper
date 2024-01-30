@@ -50,6 +50,7 @@ def get_full_review(review_elem, driver, block):
             
             # Click the element using Selenium
             read_more_elem_selenium.click()
+            print("-> Button CLICKED")
             
         except Exception as e:
             print(f"Error clicking 'READ MORE' button: {e}")
@@ -59,8 +60,26 @@ def get_full_review(review_elem, driver, block):
         
         # Find the element containing the full review text
         # full_review_elem = driver.find_element_by_xpath('//div[@class="t-ZTKy"]/div/div')
+        # full_review_elem = block.find('div', {'class': 't-ZTKy'})
+        # print(full_review_elem.text.strip())
+        
+        # full_review_elem = WebDriverWait(block, 10).until(
+        #     EC.visibility_of_element_located((By.CSS_SELECTOR, 'div[class^="t-ZTKy"]'))
+        # )
+        # print(full_review_elem.text.strip())
+        
+        # block_updated = BeautifulSoup(driver.page_source, 'html.parser')
+        
         full_review_elem = block.find('div', {'class': 't-ZTKy'})
+        # print(full_review_elem.text.strip())
+        
+        
+        # full_review_elem = WebDriverWait(driver, 10).until(
+        #     EC.visibility_of_element_located((By.CSS_SELECTOR, 'div[class^="t-ZTKy"]'))
+        # )
         print(full_review_elem.text.strip())
+        
+        # TODO: Click all 'READ MORE' buttons on the page and then apply bs4 to extract the full review text
         
         return full_review_elem.text if full_review_elem else review_elem.text
 
