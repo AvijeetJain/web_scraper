@@ -108,7 +108,7 @@ def main():
     # Save all reviews to JSON
     save_reviews_to_json(reviews, 'allReviews.json')
 
-    print("Script completed successfully.")
+    print("Script completed successfully")
 
 if __name__ == "__main__":
     main()
