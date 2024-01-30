@@ -44,8 +44,6 @@ def cus_rev(soup, driver):
         location_text = location_elem.text if location_elem else None
 
         if rating_elem and review_elem and name_elem and date_elem:
-            review_text = get_full_review(sum_elem, driver, block)
-            print(review_text)
             review = {
                 'Rating': rating_elem.text,
                 'Review': review_elem.text.strip(),
@@ -60,15 +58,15 @@ def cus_rev(soup, driver):
         print("---------------------------------------------------------------------")
     return reviews
 
-def get_full_review(review_elem, driver, block):
-    full_review_elem = block.find('div', {'class': 't-ZTKy'})
-    print(full_review_elem.text.strip())
-    return full_review_elem.text.strip() if full_review_elem else review_elem.text.strip()
+# def get_full_review(review_elem, driver, block):
+#     full_review_elem = block.find('div', {'class': 't-ZTKy'})
+#     print(full_review_elem.text.strip())
+#     return full_review_elem.text.strip() if full_review_elem else review_elem.text.strip()
 
 def save_reviews_to_csv(reviews, filename):
     fields = ['Rating', 'Review', 'Name', 'Date', 'Review Description', 'Location']
 
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+    with open(filename, 'a', newline='', encoding='utf-8') as csvfile:
         csvwriter = csv.DictWriter(csvfile, fieldnames=fields)
         csvwriter.writeheader()
         csvwriter.writerows(reviews)
