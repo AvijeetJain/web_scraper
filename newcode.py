@@ -71,32 +71,6 @@ def save_reviews_to_json(reviews, filename):
         json.dump(reviews, json_file, ensure_ascii=False, indent=2)
 
     print(f"Reviews written to JSON: {filename}")
-
-# def main():
-#     # URL of the page to scrape
-#     url = "https://www.flipkart.com/harry-potter-philosopher-s-stone/product-reviews/itmfc5dhvrkh5jqp?pid=9781408855652&lid=LSTBOK9781408855652OQYZXT&marketplace=FLIPKART"
-
-#     # Set the desired page number
-#     desired_page = 2
-#     page_url = url + "&page=" + str(desired_page)
-    
-#     # Open the browser and fetch the page
-#     driver = webdriver.Chrome()  # Make sure to have the ChromeDriver installed
-#     driver.get(page_url)
-
-#     # Click all "Read More" buttons on the page
-#     click_all_read_more_buttons(driver)
-
-#     # Fetch the updated HTML content
-#     soup = BeautifulSoup(driver.page_source, "html.parser")
-
-#     # Scrape reviews from the desired page
-#     page_reviews = cus_rev(soup, driver)
-#     # print(page_reviews)
-
-#     save_reviews_to_csv(page_reviews, 'reviews2.csv')
-#     # Close the browser after scraping
-#     driver.quit()
     
 def main():
     # URL of the page to scrape
