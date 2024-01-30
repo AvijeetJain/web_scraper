@@ -53,9 +53,7 @@ def cus_rev(soup, driver):
                 'Location': location_text
             }
             reviews.append(review)
-            
-        print("---------------------------------------------------------------------")
-        print("---------------------------------------------------------------------")
+
     return reviews
 
 # def get_full_review(review_elem, driver, block):
