@@ -1,11 +1,13 @@
 import requests
-from bs4 import BeautifulSoup
-import json
 import csv
+import json
+import time
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 
 def html_code(url):
     headers = {
@@ -14,26 +16,35 @@ def html_code(url):
     soup = BeautifulSoup(response.content, "html.parser")
     return soup
 
-def get_full_review(review_block, url, driver):
-    read_more_button = review_block.find('button', {'class': '_XVjZLG'})
-    
-    if read_more_button:
-        # Use Selenium to click the 'Read More' button and wait for the content to load
-        # driver = webdriver.Chrome()  
-        driver.get(url)
-        
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, '_XVjZLG'))).click()
-        
-        full_review_elem = driver.find_element_by_css_selector('div[class^="ooJZfM"]')
-        full_review = full_review_elem.text.strip()
-        
-        driver.quit()  # Close the browser
-        
-        return full_review
+def click_all_read_more_button(driver):
+    while True:
+        read_more_buttons = driver.find_elements(By.CLASS_NAME, '_1BWGvX')
 
-    return review_block.text.strip()
+        if not read_more_buttons:
+            print("No more 'READ MORE' buttons to click.")
+            break
 
-def cus_rev(soup, url, driver):
+        for button in read_more_buttons:
+            try:
+                # Scroll into view using ActionChains
+                actions = ActionChains(driver)
+                actions.move_to_element(button).perform()
+
+                # Click the element using Selenium
+                button.click()
+                print("-> Button CLICKED")
+
+            except Exception as e:
+                print(f"Error clicking 'READ MORE' button: {e}")
+
+            # Wait for the expanded text to load (adjust the time accordingly)
+            time.sleep(1)
+
+def get_full_review(review_elem, block):
+    full_review_elem = block.find('div', {'class': 't-ZTKy'})
+    return full_review_elem.text.strip() if full_review_elem else review_elem.text.strip()
+
+def cus_rev(soup, driver):
     reviews = []
     review_blocks = soup.find_all('div', {'class': '_27M-vq'})
     for block in review_blocks:
@@ -47,15 +58,20 @@ def cus_rev(soup, url, driver):
         location_text = location_elem.text if location_elem else None
 
         if rating_elem and review_elem and name_elem and date_elem:
+            review_text = get_full_review(sum_elem, block)
+            print(review_text)
             review = {
                 'Rating': rating_elem.text,
-                'Review': get_full_review(review_elem, url, driver),
+                'Review': review_elem.text.strip(),
                 'Name': name_elem.text.strip(),
                 'Date': date_elem.text.strip(),
-                'Review Description': sum_elem.text.strip(),
+                'Review Description': review_text,
                 'Location': location_text
             }
             reviews.append(review)
+
+        print("---------------------------------------------------------------------")
+        print("---------------------------------------------------------------------")
     return reviews
 
 def save_reviews_to_csv(reviews, filename):
@@ -77,42 +93,46 @@ def save_reviews_to_json(reviews, filename):
 def main():
     # URL of the page to scrape
     url = "https://www.flipkart.com/harry-potter-philosopher-s-stone/product-reviews/itmfc5dhvrkh5jqp?pid=9781408855652&lid=LSTBOK9781408855652OQYZXT&marketplace=FLIPKART"
-
-    reviews = []
+    
+    # Open the browser and fetch the first page
+    driver = webdriver.Chrome()  # Make sure to have the ChromeDriver installed
     page = 1
     
-    driver = webdriver.Chrome()
+    reviews = []  # Initialize the reviews list
 
     while True:
         page_url = url + "&page=" + str(page)
         print(page, "st page is scraping")
+        click_all_read_more_button(driver)
         soup = html_code(page_url)
-        page_reviews = cus_rev(soup, url, driver)
-        
+
+        # Click all "READ MORE" buttons
+
+        # Scrape reviews from the desired page
+        page_reviews = cus_rev(soup, driver)
+
         if not page_reviews:
             print(f"No more pages to scrape.")
             break
-        
+
         reviews.extend(page_reviews)
-        
+
         next_button = soup.find('a', {'class': '_1LKTO3'})
         if not next_button:
             print(f"No more pages to scrape.")
             break
 
         page += 1
-        
+
+    # Save all reviews to CSV
+    save_reviews_to_csv(reviews, 'all_reviews.csv')
+
+    # Close the browser after scraping
     driver.quit()
 
-    print(reviews)
+if __name__ == "__main__":
+    main()
 
-    # Save reviews to CSV
-    save_reviews_to_csv(reviews, 'reviews.csv')
-
-    # Save all reviews to JSON
-    save_reviews_to_json(reviews, 'allReviews.json')
-
-    print("Script completed successfully.")
 
 if __name__ == "__main__":
     main()
