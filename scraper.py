@@ -49,7 +49,7 @@ def cus_rev(soup):
                 'Review': review_elem.text.strip(),
                 'Name': name_elem.text.strip(),
                 'Date': date_elem.text.strip(),
-                'Review Description': sum_elem.text.strip(),
+                'Review Description': sum_elem.text.rstrip("READ MORE").strip(),
                 'Location': location_text
             }
             reviews.append(review)
