@@ -49,7 +49,7 @@ def cus_rev(soup):
                 'Review': review_elem.text.strip(),
                 'Name': name_elem.text.strip(),
                 'Date': date_elem.text.strip(),
-                'Review Description': sum_elem.text.strip(),
+                'Review Description': sum_elem.text.rstrip("READ MORE").strip(),
                 'Location': location_text
             }
             reviews.append(review)
@@ -111,7 +111,7 @@ def main():
 
     save_reviews_to_csv(reviews, 'allReviews.csv')         # Save reviews to CSV
 
-    save_reviews_to_json(reviews, 'allReviews.json')    # Save all reviews to JSON
+    save_reviews_to_json(reviews, 'allReviews.json')       # Save all reviews to JSON
 
     print("Script completed successfully.")
 
