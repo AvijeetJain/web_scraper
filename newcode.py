@@ -72,6 +72,8 @@ def save_reviews_to_json(reviews, filename):
 
     print(f"Reviews written to JSON: {filename}")
     
+    
+    
 def main():
     # URL of the page to scrape
     url = "https://www.flipkart.com/harry-potter-philosopher-s-stone/product-reviews/itmfc5dhvrkh5jqp?pid=9781408855652&lid=LSTBOK9781408855652OQYZXT&marketplace=FLIPKART"
