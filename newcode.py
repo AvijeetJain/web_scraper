@@ -19,17 +19,16 @@ def click_all_read_more_buttons(driver):
 
     for button in read_more_buttons:
         try:
-            # Scroll into view using ActionChains
-            actions = ActionChains(driver)
+            actions = ActionChains(driver)               # Scroll into view using ActionChains
             actions.move_to_element(button).perform()
             
-            button.click() # Click the element using Selenium
+            button.click()                               # Click the element using Selenium
             print("-> Button CLICKED")
             
         except Exception as e:
             print(f"Error clicking 'READ MORE' button: {e}")
 
-        time.sleep(3) # Wait for the expanded text to load (adjust the time accordingly)
+        time.sleep(3)                                     # Wait for the expanded text to load (adjust the time accordingly)
 
 def cus_rev(soup, driver):
     reviews = []
