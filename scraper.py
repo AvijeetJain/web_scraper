@@ -111,7 +111,7 @@ def main():
 
     save_reviews_to_csv(reviews, 'allReviews.csv')         # Save reviews to CSV
 
-    save_reviews_to_json(reviews, 'allReviews.json')    # Save all reviews to JSON
+    save_reviews_to_json(reviews, 'allReviews.json')       # Save all reviews to JSON
 
     print("Script completed successfully.")
 
