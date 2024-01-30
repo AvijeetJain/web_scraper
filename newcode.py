@@ -89,9 +89,9 @@ def main():
         soup = BeautifulSoup(driver.page_source, "html.parser")
         page_reviews = cus_rev(soup, driver)
         
-        if not page_reviews:
-            print(f"No more pages to scrape.")
-            break
+        # if not page_reviews:
+        #     print(f"No more pages to scrape.")
+        #     break
         
         reviews.extend(page_reviews)
         
