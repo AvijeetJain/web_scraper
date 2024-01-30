@@ -36,5 +36,5 @@ This web scraping project is designed to extract valuable insights from user rev
 
 ## Contributing
 
-Feel free to open issues or contribute to the project. Pull requests are welcome.
+Feel free to open issues or contribute to the project. Pull requests are always welcomed.
 
