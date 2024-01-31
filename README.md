@@ -14,7 +14,7 @@ This web scraping project is designed to extract valuable insights from user rev
 
 ## Prerequisites
 - Python 3.x
-- Libraries: `requests`, `BeautifulSoup`, `selenium`
+- Libraries: `pip`, `requests`, `BeautifulSoup`, `selenium`
 
 ## Setup
 1. Clone the repository:
