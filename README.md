@@ -12,7 +12,7 @@ This web scraping project is designed to extract valuable insights from user rev
 
 4. **Customization**: Allow for easy customization by providing parameters that users can modify, such as the URL of the target webpage, to adapt the script for different use cases.
 
-## Prerequisites
+## Dependencies
 - Python 3.x
 - Libraries: `requests`, `BeautifulSoup`, `selenium`
 
