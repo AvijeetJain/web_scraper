@@ -28,6 +28,15 @@ This web scraping project is designed to extract valuable insights from user rev
     pip install -r requirements.txt
     ```
 3. Download and install ChromeDriver for Selenium. Make sure to add the executable to your system's PATH. You can download the ChromeDriver using the link : https://chromedriver.chromium.org/downloads (Make sure that the version of the driver matches with your chromium version)
+
+## Generated Files 
+1. `allReviews.csv`: This CSV file contains the extracted reviews along with their associated data, such as ratings, review texts, reviewer names, dates, review descriptions, and locations (if available). It is generated upon completion of scraping all pages.
+
+2. `allReviews.json`: This JSON file stores the extracted reviews in a structured format, making it suitable for various data analysis tasks. Similar to the CSV file, it is created after scraping all pages.
+
+3. `tempReviews.csv`: This temporary CSV file is generated as soon as each page is scraped. It contains the reviews extracted from the current page and is later merged into the final allReviews.csv file upon completion of scraping all pages.
+
+
 ## Customization
 
 - Adjust the url variable in the script to point to the desired product review page.
