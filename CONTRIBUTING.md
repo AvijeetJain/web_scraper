@@ -26,7 +26,7 @@ where `<your-username>` is your GitHub username. Here you're copying the content
 Change to the repository directory on your computer (if you are not already there):
 
 ```
-cd pixelDust
+cd web-scraper
 ```
 
 Now create a branch using the `git checkout` command:
