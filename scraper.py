@@ -9,7 +9,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 def html_code(url):                                      # Can parse the page using this function too
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}    # Note: The version used here has to be the same as the Driver Version
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.content, "html.parser")
     return soup
